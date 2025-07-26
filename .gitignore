@@ -21,7 +21,7 @@ docker-compose.debug.yml
 docker-compose.yml
 .env
 tests
-README.md
+
 *.md
 
 # Ignore node_modules from all services
