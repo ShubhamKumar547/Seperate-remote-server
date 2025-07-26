@@ -7,7 +7,7 @@ const { LRUCache } = require("lru-cache");
 
 const app = express();
 
-const PORT = 5050;
+const PORT = 3000;
 const server = http.createServer(app);
 
 app.get("/active", (req, res) => {

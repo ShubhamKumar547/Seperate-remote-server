@@ -19,7 +19,7 @@ docker-compose.debug.yml
 *.log
 
 docker-compose.yml
-.env
+
 tests
 
 *.md
@@ -31,8 +31,7 @@ tests
 **/*.log
 
 # Ignore environment files
-**/.env
-.env
+
 
 # Ignore Docker build cache or local Redis volumes if present
 **/tmp/

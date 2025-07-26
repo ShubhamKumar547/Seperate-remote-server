@@ -129,7 +129,7 @@ ioSender.on("connection", (ws) => {
 
 // Start services
 startDataProcessor();
-const PORT = process.env.PORT || 6000;
+const PORT =  5001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`WebSocket server running on ws://localhost:${PORT}`);

@@ -7,7 +7,7 @@ const { io } = require("socket.io-client");
 
 const app = express();
 
-const PORT = 5051;
+const PORT = 5000;
 const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
