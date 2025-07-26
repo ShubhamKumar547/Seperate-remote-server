@@ -1,0 +1,47 @@
+data-streams/node_modules/
+candle-generator/node_modules/
+candle-operations/node_modules/
+
+
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+docker-compose.override.yml
+docker-compose.debug.yml
+
+
+
+.git
+
+*.log
+
+docker-compose.yml
+.env
+tests
+README.md
+*.md
+
+# Ignore node_modules from all services
+**/node_modules
+
+# Ignore logs
+**/*.log
+
+# Ignore environment files
+**/.env
+.env
+
+# Ignore Docker build cache or local Redis volumes if present
+**/tmp/
+**/dist/
+**/build/
+
+# Ignore IDE configs
+.vscode/
+.idea/
+
+# Ignore Redis data if it's volume-based
+redis/data/

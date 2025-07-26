@@ -1,0 +1,28 @@
+{
+  "name": "data-streams",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node data-streams.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "http": "^0.0.1-security",
+    "lru-cache": "^11.1.0",
+    "node-fetch": "^3.3.2",
+    "redis": "^5.6.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "utils": "^0.3.1",
+    "uuid": "^11.1.0",
+    "ws": "^8.18.3"
+  }
+}
