@@ -112,7 +112,7 @@ async function startDataStream() {
     ws.on("close", () => {
       console.warn("🔌 WebSocket disconnected. Reconnecting in 3s...");
       ioSender.emit("SYSTEM_STATUS", "WEBSOCKET_DISCONNECTED");
-      setTimeout(startDataStream, 3000);
+      setTimeout(startDataStream, 20000);
     });
 
     // Cleanup on exit
