@@ -31,7 +31,7 @@ ioSender.on("connection", (socket) => {
   });
 });
 
-const ioListener = io(process.env.CANDLE_GENERATOR_URL);
+const ioListener = io("http://localhost:5000");
 
 // Configuration
 const CANDLE_LIMIT = 120; // Store last 120 candles

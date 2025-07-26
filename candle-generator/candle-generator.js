@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require("http");
-require("dotenv").config();
+
 
 const { Server } = require("socket.io");
 const { io } = require("socket.io-client");
@@ -31,7 +31,7 @@ ioSender.on("connection", (socket) => {
   });
 });
 
-const ioListener = io(process.env.DATA_STREAMS_URL);
+const ioListener = io("http://localhost:3000");
 
 // Configuration
 const CANDLE_INTERVAL_SECONDS = 60; // 1-minute candles
