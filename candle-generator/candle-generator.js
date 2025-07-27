@@ -18,7 +18,7 @@ app.get("/active", (req, res) => {
 
 const ioSender = new Server(server, {
   cors: {
-    origin: "*", // Adjust this to your frontend URL
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -33,21 +33,20 @@ ioSender.on("connection", (socket) => {
 
 const ioListener = io("http://localhost:3000");
 
-// Configuration
+
 const CANDLE_INTERVAL_SECONDS = 60; // 1-minute candles
 const SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
 
-// Candle generation state
+
 const candleState = {};
 
 async function startCandleGenerator() {
   console.log("🕯️ Starting Candle Generator");
 
   try {
-    // await Promise.all([redisSub.connect(), redisPub.connect()]);
+    
     console.log("✅ Connected to Redis");
 
-    // Initialize candle state for each symbol
     SYMBOLS.forEach((symbol) => {
       candleState[symbol] = {
         currentCandle: null,
@@ -55,14 +54,12 @@ async function startCandleGenerator() {
         lastClose: null,
       };
 
-      // Subscribe to trade channels
       ioListener.on(`TRADE_${symbol}`, (message) => {
         processTrade(symbol, JSON.parse(message));
       });
     });
 
-    // Start candle interval scheduler
-    setInterval(generateCandles, 1000); // Check every second
+    setInterval(generateCandles, 1000); 
 
     console.log("👂 Listening for trades...");
   } catch (error) {
@@ -74,7 +71,6 @@ async function startCandleGenerator() {
 function processTrade(symbol, trade) {
   const { timestamp, price, quantity } = trade;
 
-  // Initialize candle if needed
   if (!candleState[symbol].currentCandle) {
     const candleStart =
       Math.floor(timestamp / (CANDLE_INTERVAL_SECONDS * 1000)) *
@@ -101,7 +97,6 @@ function processTrade(symbol, trade) {
     return;
   }
 
-  // Update current candle
   const candle = candleState[symbol].currentCandle;
   candle.high = Math.max(candle.high, price);
   candle.low = Math.min(candle.low, price);
@@ -119,7 +114,6 @@ function generateCandles() {
   SYMBOLS.forEach((symbol) => {
     const state = candleState[symbol];
 
-    // If it's time to finalize the candle
     if (state.currentCandle && now >= state.nextCandleTime) {
       const completedCandle = {
         ...state.currentCandle,
@@ -128,11 +122,9 @@ function generateCandles() {
         interval: CANDLE_INTERVAL_SECONDS,
         generatedAt: now,
         generatedAtISO: new Date(now).toISOString(),
-        // Calculate duration in milliseconds
         durationMs: state.nextCandleTime - 1 - state.currentCandle.startTime,
       };
 
-      // Publish the completed candle
       ioSender.emit(
         `CANDLE_${symbol}_${CANDLE_INTERVAL_SECONDS}s`,
         JSON.stringify(completedCandle)
@@ -149,17 +141,14 @@ function generateCandles() {
       //   duration: `${completedCandle.durationMs}ms`
       // });
 
-      // Store last close and reset for next candle
       state.lastClose = completedCandle.close;
       state.currentCandle = null;
     }
   });
 }
 
-// Handle graceful shutdown
 process.on("SIGINT", async () => {
   console.log("🛑 Shutting down candle generator...");
-  // await Promise.all([redisSub.quit(), redisPub.quit()]);
   process.exit(0);
 });
 

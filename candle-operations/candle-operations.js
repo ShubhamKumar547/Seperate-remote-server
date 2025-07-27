@@ -18,7 +18,7 @@ app.get("/active", (req, res) => {
 
 const ioSender = new Server(server, {
   cors: {
-    origin: "*", // Adjust this to your frontend URL
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -33,18 +33,18 @@ ioSender.on("connection", (socket) => {
 
 const ioListener = io("http://localhost:5000");
 
-// Configuration
-const CANDLE_LIMIT = 120; // Store last 120 candles
-const INTERVAL = "60s"; // 1-minute candles
 
-// Data storage with complete history
+const CANDLE_LIMIT = 120; // store last 120 candles sticks patterns
+const INTERVAL = "60s"; // 1- min candle
+
+
 const candleHistory = {
   BTCUSDT: [],
   ETHUSDT: [],
   SOLUSDT: [],
 };
 
-// Store complete candle data with original timestamps
+
 function storeCandle(symbol, candle) {
   const buffer = candleHistory[symbol];
   buffer.push({
@@ -55,14 +55,14 @@ function storeCandle(symbol, candle) {
     volume: parseFloat(candle.volume),
     interval: candle.interval || INTERVAL,
     trades: candle.trades || 0,
-    "candle-generated-timestamp": candle.endTimeISO, // From generator
+    "candle-generated-timestamp": candle.endTimeISO, 
   });
 
-  // Maintain fixed size
+ 
   if (buffer.length > CANDLE_LIMIT) buffer.shift();
 }
 
-// Process incoming candles
+
 function processCandle(symbol, message) {
   try {
     const candle = JSON.parse(message);
@@ -74,7 +74,7 @@ function processCandle(symbol, message) {
   }
 }
 
-// Initialize data processor
+
 function startDataProcessor() {
   console.log("✅ Data Processor service started");
 
@@ -83,7 +83,7 @@ function startDataProcessor() {
   ioListener.on("CANDLE_SOLUSDT_60s", (msg) => processCandle("SOLUSDT", msg));
 }
 
-// Format data as requested with last candle's generation time
+
 function formatCandleData(symbol) {
   const candles = candleHistory[symbol];
   const lastCandle = candles.length > 0 ? candles[candles.length - 1] : null;
@@ -102,7 +102,7 @@ function formatCandleData(symbol) {
   };
 }
 
-// WebSocket handler
+
 ioSender.on("connection", (ws) => {
   console.log("New client connected");
 
@@ -117,7 +117,7 @@ ioSender.on("connection", (ws) => {
           BTCUSDTC: formatCandleData("BTCUSDT"),
           ETHUSDTC: formatCandleData("ETHUSDT"),
           SOLUSDTC: formatCandleData("SOLUSDT"),
-          server_timestamp: new Date().toISOString(), // When data was sent
+          server_timestamp: new Date().toISOString(), // it have been the date send to client--
         };
         ws.emit("candle_response", JSON.stringify(response));
       }
@@ -130,7 +130,7 @@ ioSender.on("connection", (ws) => {
   ws.on("close", () => console.log("Client disconnected"));
 });
 
-// Start services
+
 startDataProcessor();
 const PORT = 5001;
 server.listen(PORT, () => {
@@ -138,10 +138,10 @@ server.listen(PORT, () => {
   console.log(`WebSocket server running on ws://localhost:${PORT}`);
 });
 
-// Graceful shutdown
+
 process.on("SIGINT", async () => {
   console.log("🛑 Shutting down gracefully...");
-  // await Promise.all([redisSub.quit(), redisPub.quit()]);
+  
   server.close(() => {
     console.log("Server closed");
     process.exit(0);

@@ -17,7 +17,7 @@ app.get("/active", (req, res) => {
 
 const ioSender = new Server(server, {
   cors: {
-    origin: "*", // Adjust this to your frontend URL
+    origin: "*", 
     methods: ["GET", "POST"],
   },
 });
@@ -30,7 +30,7 @@ ioSender.on("connection", (socket) => {
   });
 });
 
-// Track last processed trades to prevent duplicates
+
 const lastProcessedTrades = new LRUCache({
   max: 121, // max number of items
   ttl: 1000 * 60 * 10, // time to live in ms (optional)
@@ -69,21 +69,21 @@ async function startDataStream() {
           m: isBuyerMaker,
         } = msg.data;
 
-        // Validate required fields
+        
         if (!symbol || !priceStr || !quantityStr || !timestamp || !tradeId) {
           console.warn("⚠️ Incomplete trade data:", msg.data);
           return;
         }
 
-        // Parse numbers
+        
         const price = parseFloat(priceStr);
         const quantity = parseFloat(quantityStr);
 
-        // Deduplication check
+       
         if (lastProcessedTrades[tradeId]) return;
         lastProcessedTrades[tradeId] = true;
 
-        // Clean trade object
+      
         const tradeData = {
           event: "aggTrade",
           symbol,
@@ -97,7 +97,7 @@ async function startDataStream() {
         };
         // console.log(tradeData);
 
-        // Publish to symbol-specific channel
+        
         ioSender.emit(`TRADE_${symbol}`, JSON.stringify(tradeData));
       } catch (error) {
         console.error("❌ Trade processing error:", error);
@@ -115,7 +115,7 @@ async function startDataStream() {
       setTimeout(startDataStream, 20000);
     });
 
-    // Cleanup on exit
+  
     process.on("SIGINT", async () => {
       console.log("🛑 Gracefully shutting down...");
       ws.close();
