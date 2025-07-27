@@ -67,6 +67,7 @@ function processCandle(symbol, message) {
   try {
     const candle = JSON.parse(message);
     storeCandle(symbol, candle);
+
     console.log(`📈 Stored ${symbol} candle: ${candle.endTimeISO}`);
   } catch (error) {
     console.error(`Error processing ${symbol} candle:`, error);
@@ -108,15 +109,17 @@ ioSender.on("connection", (ws) => {
   ws.on("message", (message) => {
     try {
       const msg = JSON.parse(message);
+      console.log("📈 msg recieved:", msg);
 
       if (msg.type === "get-candles") {
+        console.log("📈 candle data sent");
         const response = {
-          BTCUSDT: formatCandleData("BTCUSDT"),
-          ETHUSDT: formatCandleData("ETHUSDT"),
-          SOLUSDT: formatCandleData("SOLUSDT"),
+          BTCUSDTC: formatCandleData("BTCUSDT"),
+          ETHUSDTC: formatCandleData("ETHUSDT"),
+          SOLUSDTC: formatCandleData("SOLUSDT"),
           server_timestamp: new Date().toISOString(), // When data was sent
         };
-        ws.send(JSON.stringify(response));
+        ws.emit("candle_response", JSON.stringify(response));
       }
     } catch (error) {
       console.error("WebSocket error:", error);
@@ -129,7 +132,7 @@ ioSender.on("connection", (ws) => {
 
 // Start services
 startDataProcessor();
-const PORT =  5001;
+const PORT = 5001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`WebSocket server running on ws://localhost:${PORT}`);
@@ -148,7 +151,7 @@ process.on("SIGINT", async () => {
 // requested data format
 
 // {
-//   "BTCUSDT": {
+//   "BTCUSDTC": {
 //     "open": [array of 120 values],
 //     "high": [array of 120 values],
 //     "low": [array of 120 values],
@@ -158,7 +161,7 @@ process.on("SIGINT", async () => {
 //     "trades": [array of 120 values],
 //     "data-last-updated-timestamp": "2023-11-15T14:01:59.999Z" // Last candle's end time
 //   },
-//   "ETHUSDT": { ... },
-//   "SOLUSDT": { ... },
+//   "ETHUSDTC": { ... },
+//   "SOLUSDTC": { ... },
 //   "server_timestamp": "2023-11-15T14:02:03.456Z" // When data was sent
 // }
